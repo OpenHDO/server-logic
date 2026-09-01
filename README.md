@@ -1,39 +1,38 @@
 # OpenHDO Logic
 
-`server-logic` is the server-side module for data-driven automation. It owns
-flows, nodes, ports, connections, triggers, conditions, transformations,
-actions, schedules, and execution results.
+`server-logic` is the Python server-side flow module. It validates a small
+typed DAG, evaluates an incoming event, and emits validated command intent for
+the server application. The server remains responsible for authorization,
+delivery, retries, persistence, and transport.
 
 ## Boundary
 
-Logic consumes events and emits validated commands through the server core. It
-does not access device drivers directly, duplicate the registry, or become a
-separate source of truth for dashboard state.
+The module is stdlib-only and has no device-driver, network, database, or UI
+dependency. It is not a standalone gateway or runtime. Vendor details stay in
+the Python Linker; canonical state stays in the server.
 
-## Status
-
-The first vertical slice is implemented as a dependency-free C++20 library.
-It validates typed DAGs, consumes a versioned server event DTO, and returns a
-versioned command DTO plus a deterministic node trace and structured errors.
+The current node kinds are deliberately small:
 
 ```text
 event.trigger ── matched ──┐
-                           ├── command.emit ── command result
+                           ├── command.emit
 value.constant ── value ───┘
 ```
 
-Build and test:
+## Install and check
 
-```text
-cmake -S . -B build -DOPENHDO_BUILD_TESTS=ON
-cmake --build build
-ctest --test-dir build --output-on-failure
+```powershell
+python -m pip install -e .
+python -m unittest discover -s tests -v
+python -m compileall -q openhdo_logic
+python -m pip wheel . --no-deps --no-build-isolation -w build/package
 ```
 
-The engine does not access hardware or deliver commands. The server core owns
-authorization, delivery, retries, and transport adaptation. See
-[`docs/ADR-0001-minimal-flow-engine.md`](docs/ADR-0001-minimal-flow-engine.md)
-for the boundary and intentional limits.
+Commands preserve the incoming event correlation and are deterministic for the
+same request. Flow validation fails closed on unsupported versions, malformed
+messages, invalid ports, multiple input connections, missing required inputs,
+and cyclic graphs.
 
-See the [project architecture](https://github.com/OpenHDO/about/blob/main/ARCHITECTURE.md)
+See [`docs/ADR-0001-minimal-flow-engine.md`](docs/ADR-0001-minimal-flow-engine.md),
+the [project architecture](https://github.com/OpenHDO/about/blob/main/ARCHITECTURE.md),
 and [server contracts](https://github.com/OpenHDO/server/tree/master/contracts/v1).

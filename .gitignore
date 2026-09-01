@@ -2,6 +2,7 @@ build*/
 out/
 node_modules/
 dist/
+*.egg-info/
 __pycache__/
 *.py[cod]
 .venv/
