@@ -1,0 +1,14 @@
+name: Plugin CI and release
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  plugin:
+    permissions:
+      contents: write
+    uses: OpenHDO/plugin-cli/.github/workflows/plugin-release.yml@v1.1.0
