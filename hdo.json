@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "apiVersion": 1,
+  "id": "openhdo.logic",
+  "name": "Logic",
+  "version": "1.0.0",
+  "permissions": ["api", "storage", "events", "providers"],
+  "entrypoints": { "python": "plugin.py", "web": "web/plugin.js" },
+  "contributes": { "modules": [{ "id": "logic", "name": "Logic" }], "flowNodes": [{ "id": "device-action" }] }
+}
