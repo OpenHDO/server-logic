@@ -49,6 +49,8 @@ def activate(ctx):
         return await execute(rule, {"type":"manual", "payload":{}})
 
     async def event_handler(event):
+        if event["source"] == ctx.id:
+            return  # Command readback must not recursively trigger its own automation.
         for rule in ctx.store.get("rules", []):
             if rule.get("enabled", True) and rule["event"] == event["type"]:
                 match = rule.get("match", {})

@@ -66,7 +66,7 @@ async `flowNodes` action supplied by an enabled plugin. Example:
 
 GET/PUT `rules` reads or replaces rules; POST `run` with `{"id":"socket-on"}`
 executes one rule explicitly. Mutation is admin-only. At least one second of
-cooldown prevents a rule immediately triggering itself through command
-readback. Custom action plugins register `ctx.extension("flowNodes", id,
+cooldown limits repeated external triggers; event-source tracking prevents
+command readback from recursively triggering the same automation. Custom action plugins register `ctx.extension("flowNodes", id,
 async_handler)` where `async_handler(config, event)` performs the action. The
 original deterministic DAG engine remains available as a standalone library.
